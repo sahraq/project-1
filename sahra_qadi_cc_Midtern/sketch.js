@@ -10,3 +10,16 @@ function drawBackground() {
     ellipse(x, y, w, h);
   }
 }
+function display() {
+    // characters
+    fill(random(255), random(255), random(255), 150);
+    stroke(0);
+    strokeWeight(2);
+    beginShape();
+    for (let i = 0; i < TWO_PI; i += PI / 6) {
+      let xOffset = cos(i + this.angle + this.wavyOffset) * this.size;
+      let yOffset = sin(i + this.angle + this.wavyOffset) * this.size;
+      vertex(this.x + xOffset, this.y + yOffset);
+    }
+    endShape(CLOSE);
+}
