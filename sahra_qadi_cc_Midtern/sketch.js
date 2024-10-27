@@ -1,8 +1,35 @@
+
+let sceneLength = 20000; // 20 seconds
+let sinceLastScene = 0;//how long has passed since last scene
+let isFirstScene = true; // start with scene 1
 let shapeCount = 10; // number of shapes
 let shapeSize = 50; // base size of shapes
 let shapeArray = []; // hold shape instances
+function setup() {
+  createCanvas(800, 600);
+  for (let i = 0; i < shapeCount; i++) {
+    shapeArray.push(new confusedShape(random(width), random(height), shapeSize));
+  }
+}
 
-class ConfusionShape {
+function(draw){
+if (isFirstScene) {
+    drawFirstScene();
+    for (let shape of shapeArray) {
+      shape.update();
+      shape.display();
+    }
+  } else {
+    drawSecondScene();
+  }
+}
+ if (millis() - sinceLastScene > sceneLength) {  // checks if 20 seconds have passed since last scene
+    isFirstScene = !isFirstScene;  // 
+    sinceLastScene = millis();  // 
+  }
+
+
+class confusedShape {
   constructor(x, y, size) {
     this.x = x;
     this.y = y;
@@ -69,15 +96,9 @@ noStroke();
   }
 }
 
-function setup() {
-  createCanvas(800, 600);
-  for (let i = 0; i < shapeCount; i++) {
-    shapeArray.push(new ConfusionShape(random(width), random(height), shapeSize));
-  }
-}
 
-function draw() {
-  // background with shapes for a confusing effect
+function drawFirstScene() {
+
   drawBackground();
   
   for (let shape of shapeArray) {
@@ -102,7 +123,7 @@ function setup() {
   createCanvas(800, 600);
 }
 
-function draw() {
+function drawSecondScene() {
   background(34, 139, 34);
   // road colors and sizes
   let roadWidth = 100;
