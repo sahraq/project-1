@@ -10,6 +10,8 @@ class ConfusionShape {
     this.angle = random(TWO_PI);
     this.speed = random(1, 3);
     this.wavyOffset = random(TWO_PI);
+    this.eyeSize = size * 0.2; // initial eye size 
+
   }
   
   update() {
@@ -25,6 +27,7 @@ class ConfusionShape {
     // change angle randomly every 60 frames
     if (frameCount % 60 === 0) {
       this.angle += random(-PI / 4, PI / 4);
+      this.eyeSize = this.size * random(0.1, 0.3); // randomly change eye size 
     }
   }
   
@@ -39,6 +42,30 @@ class ConfusionShape {
       vertex(this.x + xOffset, this.y + yOffset);
     }
     endShape(CLOSE);
+   
+   // Eyes
+fill(255);
+noStroke();
+
+// Eyes
+    fill(255);
+    noStroke();
+
+    // wonky moving eyes
+    let leftEyeSize = this.eyeSize + sin(frameCount * 1.1) * this.eyeSize * 0.9;
+    let rightEyeSize = this.eyeSize + sin(frameCount * 1.) * this.eyeSize * 0.9;
+
+    // draw eyes
+    ellipse(this.x - this.size / 4, this.y - this.size / 4, leftEyeSize, leftEyeSize); // left eye
+    ellipse(this.x + this.size / 4, this.y - this.size / 4, rightEyeSize, rightEyeSize); // right eye
+
+    // pupils
+    fill(0);
+    let pupilX = cos(frameCount * 0.41) * this.eyeSize * 0.3; // pupil movement
+    let pupilY = sin(frameCount * 0.21) * this.eyeSize * 0.3; // pupil movement
+
+    ellipse(this.x - this.size / 4 + pupilX, this.y - this.size / 4 + pupilY, leftEyeSize * 0.4, leftEyeSize * 0.4); // left pupil
+    ellipse(this.x + this.size / 4 + pupilX, this.y - this.size / 4 + pupilY, rightEyeSize * 0.4, rightEyeSize * 0.4); // right pupil
   }
 }
 
@@ -69,5 +96,41 @@ function drawBackground() {
     let w = random(100, 400); 
     let h = random(100, 400);
     ellipse(x, y, w, h);
+  }
+}
+function setup() {
+  createCanvas(800, 600);
+}
+
+function draw() {
+  background(34, 139, 34);
+  // road colors and sizes
+  let roadWidth = 100;
+  let lineColor = color(225,225,0);
+  let roadColor = color(120);
+  
+  // draw intersecting vertical and horizontal roads
+  fill(roadColor);
+  noStroke();
+  // horizontal road
+  rect(0, height / 2 - roadWidth / 2, width, roadWidth);
+  // vertical road
+  rect(width / 2 - roadWidth / 2, 0, roadWidth, height);
+  //dashed lines on the roads
+  drawDashedLine(0, height / 2, width, height / 2, lineColor, roadWidth / 10); // horizontal dashed line
+  drawDashedLine(width / 2, 0, width / 2, height, lineColor, roadWidth / 10); // vertial dashed line
+}
+
+function drawDashedLine(x1, y1, x2, y2, color, dashLength) {
+  stroke(color);
+  strokeWeight(4);
+  let distance = dist(x1, y1, x2, y2);
+  let dashes = distance / (dashLength * 2);
+  for (let i = 0; i < dashes; i++) {
+    let x = lerp(x1, x2, (i * 2) / dashes);
+    let y = lerp(y1, y2, (i * 2) / dashes);
+    let xEnd = lerp(x1, x2, ((i * 2) + 1) / dashes);
+    let yEnd = lerp(y1, y2, ((i * 2) + 1) / dashes);
+    line(x, y, xEnd, yEnd);
   }
 }
