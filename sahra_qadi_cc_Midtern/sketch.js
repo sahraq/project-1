@@ -1,5 +1,5 @@
 
-let sceneLength = 20000; // 20 seconds
+let sceneLength = 12000; // 12 seconds
 let sinceLastScene = 0;//how long has passed since last scene
 let isFirstScene = true; // start with scene 1
 let shapeCount = 10; // number of shapes
@@ -12,22 +12,17 @@ function setup() {
   }
 }
 
-function(draw){
+function draw(){
 if (isFirstScene) {
     drawFirstScene();
-    for (let shape of shapeArray) {
-      shape.update();
-      shape.display();
-    }
   } else {
     drawSecondScene();
-  }
 }
  if (millis() - sinceLastScene > sceneLength) {  // checks if 20 seconds have passed since last scene
-    isFirstScene = !isFirstScene;  // 
-    sinceLastScene = millis();  // 
+    isFirstScene = !isFirstScene; 
+    sinceLastScene = millis();  
   }
-
+}
 
 class confusedShape {
   constructor(x, y, size) {
@@ -118,9 +113,6 @@ function drawBackground() {
     let h = random(100, 400);
     ellipse(x, y, w, h);
   }
-}
-function setup() {
-  createCanvas(800, 600);
 }
 
 function drawSecondScene() {
