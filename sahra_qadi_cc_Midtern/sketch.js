@@ -132,6 +132,7 @@ function drawSecondScene() {
   //dashed lines on the roads
   drawDashedLine(0, height / 2, width, height / 2, lineColor, roadWidth / 10); // horizontal dashed line
   drawDashedLine(width / 2, 0, width / 2, height, lineColor, roadWidth / 10); // vertial dashed line
+  drawSigns()
 }
 
 function drawDashedLine(x1, y1, x2, y2, color, dashLength) {
@@ -146,4 +147,14 @@ function drawDashedLine(x1, y1, x2, y2, color, dashLength) {
     let yEnd = lerp(y1, y2, ((i * 2) + 1) / dashes);
     line(x, y, xEnd, yEnd);
   }
+}
+function drawSigns() {
+  
+  // arrow 
+    stroke(0);
+    strokeWeight(2);
+    line(-8, 0, 8, 0); // arrow line
+    fill(255);
+    stroke(5);
+    triangle(8, 0, 4, -3, 4, 3); //  arrow head
 }
