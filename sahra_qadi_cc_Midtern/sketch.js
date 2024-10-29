@@ -65,29 +65,29 @@ class confusedShape {
     }
     endShape(CLOSE);
    
-   // Eyes
-fill(255);
-noStroke();
-
 // Eyes
     fill(255);
     noStroke();
 
     // wonky moving eyes
-    let leftEyeSize = this.eyeSize + sin(frameCount * 1.1) * this.eyeSize * 0.9;
-    let rightEyeSize = this.eyeSize + sin(frameCount * 1.) * this.eyeSize * 0.9;
+   // left eye (wide oval)
+let leftEyeWidth = this.eyeSize * 1.4;  // wider  horizontally
+let leftEyeHeight = this.eyeSize * 2.8; // narrower vertically
+ellipse(this.x - this.size / 4, this.y - this.size / 4, leftEyeWidth, leftEyeHeight); // left eye
 
-    // draw eyes
-    ellipse(this.x - this.size / 4, this.y - this.size / 4, leftEyeSize, leftEyeSize); // left eye
-    ellipse(this.x + this.size / 4, this.y - this.size / 4, rightEyeSize, rightEyeSize); // right eye
+// right eye (tall oval)
+let rightEyeWidth = this.eyeSize * 2; // narrower horizontally
+let rightEyeHeight = this.eyeSize * 4.4; // taller vertically
+ellipse(this.x + this.size / 4, this.y - this.size / 4, rightEyeWidth, rightEyeHeight); // right eye
+
 
     // pupils
     fill(0);
-    let pupilX = cos(frameCount * 0.41) * this.eyeSize * 0.3; // pupil movement
-    let pupilY = sin(frameCount * 0.21) * this.eyeSize * 0.3; // pupil movement
+    let pupilX = cos(frameCount * 0.41) * this.eyeSize * 0.6; // pupil movement
+    let pupilY = sin(frameCount * 0.21) * this.eyeSize * 0.4; // pupil movement
 
-    ellipse(this.x - this.size / 4 + pupilX, this.y - this.size / 4 + pupilY, leftEyeSize * 0.4, leftEyeSize * 0.4); // left pupil
-    ellipse(this.x + this.size / 4 + pupilX, this.y - this.size / 4 + pupilY, rightEyeSize * 0.4, rightEyeSize * 0.4); // right pupil
+    ellipse(this.x - this.size / 4 + pupilX, this.y - this.size / 4 + pupilY, leftEyeWidth * 0.4, leftEyeHeight * 0.4); // left pupil
+    ellipse(this.x + this.size / 4 + pupilX, this.y - this.size / 4 + pupilY, rightEyeWidth* 0.4, rightEyeHeight * 0.4); // right pupil
   }
 }
 
