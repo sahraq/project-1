@@ -149,6 +149,17 @@ function drawDashedLine(x1, y1, x2, y2, color, dashLength) {
   }
 }
 function drawSigns() {
+  let signPositions = [ //location for each road sign
+    {x: 220, y: 200},
+    {x: 470, y: 200},
+    {x: 220, y: 400},
+    {x: 470, y: 350}
+  ];
+  
+  for (let pos of signPositions) { //add sign illustation for each location
+    push();
+    translate(pos.x, pos.y);
+  rotate((frameCount * 0.10 ) % TWO_PI); //signs spin
    //  sign background
     fill(255);
     stroke(0);
@@ -163,4 +174,6 @@ function drawSigns() {
     fill(255);
     stroke(5);
     triangle(8, 0, 4, -3, 4, 3); //  arrow head
+    pop();
+}
 }
