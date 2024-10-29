@@ -149,7 +149,13 @@ function drawDashedLine(x1, y1, x2, y2, color, dashLength) {
   }
 }
 function drawSigns() {
-  
+   //  sign background
+    fill(255);
+    stroke(0);
+    strokeWeight(3);
+    rectMode(CENTER);
+    rect(0, 0, 30, 15);
+    
   // arrow 
     stroke(0);
     strokeWeight(2);
