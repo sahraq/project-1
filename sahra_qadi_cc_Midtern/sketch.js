@@ -144,8 +144,8 @@ drawLostCharacter(width / 2, height / 2, frameCount);
 function drawLostCharacter(centerX, centerY, frameCount) {
   
   push();
-  let shakeX = sin(frameCount * 0.1) * 2; // small shake on x-axis
-  let shakeY = cos(frameCount * 0.1) * 2; // small shake on y-axis
+  let shakeX = sin(frameCount * 0.6) * 2; // small shake on x-axis
+  let shakeY = cos(frameCount * 0.6) * 2; // small shake on y-axis
   translate(centerX + shakeX, centerY + shakeY);
 
   let steps = 90;// steps in each direction 
@@ -222,9 +222,9 @@ function drawDashedLine(x1, y1, x2, y2, color, dashLength) {
 }
 function drawSigns() {
   let signPositions = [ //location for each road sign
-    {x: 220, y: 200},
-    {x: 470, y: 200},
-    {x: 220, y: 400},
+    {x: 330, y: 250},
+    {x: 470, y: 250},
+    {x: 330, y: 350},
     {x: 470, y: 350}
   ];
   
@@ -237,14 +237,14 @@ function drawSigns() {
     stroke(0);
     strokeWeight(3);
     rectMode(CENTER);
-    rect(0, 0, 30, 15);
+    rect(0, 0, 50, 25);
     
   // arrow 
-    stroke(0);
+    stroke(225,0,0);
     strokeWeight(5);
     line(-8, 0, 8, 0); // arrow line
-    fill(255);
-    stroke(5);
+    fill(225,0,0);
+    stroke(225,0,0);
     triangle(8, 0, 4, -3, 4, 3); //  arrow head
     pop();
 }
