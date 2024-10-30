@@ -67,7 +67,7 @@ class confusedShape {
    
 // Eyes
     fill(255);
-    noStroke();
+   stroke(2);
 
     // wonky moving eyes
    // left eye (wide oval)
@@ -88,6 +88,10 @@ ellipse(this.x + this.size / 4, this.y - this.size / 4, rightEyeWidth, rightEyeH
 
     ellipse(this.x - this.size / 4 + pupilX, this.y - this.size / 4 + pupilY, leftEyeWidth * 0.4, leftEyeHeight * 0.4); // left pupil
     ellipse(this.x + this.size / 4 + pupilX, this.y - this.size / 4 + pupilY, rightEyeWidth* 0.4, rightEyeHeight * 0.4); // right pupil
+     // draw mouth 
+stroke(0); // set mouth color to black
+strokeWeight(3); // set thickness for the mouth line
+line(this.x - this.size * 0.2, this.y + this.size * 0.5, this.x + this.size * 0.2, this.y + this.size * 0.5); // draw  line for mouth
   }
 }
 
@@ -133,6 +137,74 @@ function drawSecondScene() {
   drawDashedLine(0, height / 2, width, height / 2, lineColor, roadWidth / 10); // horizontal dashed line
   drawDashedLine(width / 2, 0, width / 2, height, lineColor, roadWidth / 10); // vertial dashed line
   drawSigns()
+
+  // draw the lost character at the center of the canvas
+drawLostCharacter(width / 2, height / 2, frameCount);
+}
+function drawLostCharacter(centerX, centerY, frameCount) {
+  
+  push();
+  let shakeX = sin(frameCount * 0.1) * 2; // small shake on x-axis
+  let shakeY = cos(frameCount * 0.1) * 2; // small shake on y-axis
+  translate(centerX + shakeX, centerY + shakeY);
+
+  let steps = 90;// steps in each direction 
+  let pauseSteps = 90; // frames to pause and rotate
+  let moveDist = 5; // how far 
+  let street = Math.floor(frameCount / (steps + pauseSteps)) % 4; // each street is walked down
+  let stepDownStreet = frameCount % (steps + pauseSteps);
+  // how many steps down each street
+
+  // movement directions based on phase, returns to center at the end of each phase
+  let dx = 0, dy = 0;
+
+  if (stepDownStreet < pauseSteps) {
+    // during pause rotate in place
+    let rotationAngle = map(stepDownStreet, 0, pauseSteps, 0, PI / 2);
+    rotate(rotationAngle);
+  } else {
+    // after pause, character starts moving
+    let moveStep = stepDownStreet - pauseSteps; // move steps after pause period
+
+    if (street === 0) {
+      // move up and then return
+      dy = -moveDist;
+    } else if (street === 1) {
+      // move down and then return
+      dy = moveDist;
+    } else if (street === 2) {
+      // move left and then return
+      dx = -moveDist;
+    } else if (street === 3) {
+      // move right and then return
+      dx = moveDist;
+    }
+
+    // apply movement after pause period
+    translate(dx * moveStep, dy * moveStep);
+  }
+
+  // display character with wavy shape
+  fill(random(255), random(255), random(255), 150);
+  stroke(0);
+  strokeWeight(1);
+  beginShape();
+  for (let i = 0; i < TWO_PI; i += PI / 6) {
+    let xOffset = cos(i) * 20;
+    let yOffset = sin(i) * 20;
+    vertex(xOffset, yOffset);
+  }
+  endShape(CLOSE);
+
+  // eyes
+  fill(255);
+  ellipse(-4, -5, 6, 10); // left eye
+  ellipse(4, -5, 6, 7);   // right eye
+  
+  // draw mouth
+  strokeWeight(1); // adjust thickness for the mouth line
+  line(-5, 8, 5, 8); // horizontal line for the mouth 
+  pop();
 }
 
 function drawDashedLine(x1, y1, x2, y2, color, dashLength) {
@@ -169,7 +241,7 @@ function drawSigns() {
     
   // arrow 
     stroke(0);
-    strokeWeight(2);
+    strokeWeight(5);
     line(-8, 0, 8, 0); // arrow line
     fill(255);
     stroke(5);
