@@ -221,31 +221,64 @@ function drawDashedLine(x1, y1, x2, y2, color, dashLength) {
   }
 }
 function drawSigns() {
-  let signPositions = [ //location for each road sign
-    {x: 330, y: 250},
-    {x: 470, y: 250},
-    {x: 330, y: 350},
-    {x: 470, y: 350}
+  let signPositions = [
+    { x: 330, y: 250 },
+    { x: 470, y: 250 },
+    { x: 330, y: 350 },
+    { x: 470, y: 350 }
   ];
-  
-  for (let pos of signPositions) { //add sign illustation for each location
+
+  for (let i = 0; i < signPositions.length; i++) {
+    let pos = signPositions[i];
     push();
     translate(pos.x, pos.y);
-  rotate((frameCount * 0.10 ) % TWO_PI); //signs spin
-   //  sign background
-    fill(255);
-    stroke(0);
+
+    fill(0, 51, 0); // sign background
+    stroke(255);    
     strokeWeight(3);
     rectMode(CENTER);
-    rect(0, 0, 50, 25);
-    
-  // arrow 
-    stroke(225,0,0);
-    strokeWeight(5);
-    line(-8, 0, 8, 0); // arrow line
-    fill(225,0,0);
-    stroke(225,0,0);
-    triangle(8, 0, 4, -3, 4, 3); //  arrow head
-    pop();
+    rect(0, 0, 80, 40);
+
+   // change arrow direction based on frame
+let flip1 = (frameCount % 60) < 16; / frames 0 to 15
+let flip2 = (frameCount % 60) >= 16 && (frameCount % 60) < 31; // frames 16 to 30
+let flip3 = (frameCount % 60) >= 31 && (frameCount % 60) < 46; //  frames 31 to 45
+let flip4 = (frameCount % 60) >= 46; //  frames 46 to 59
+
+   //change arrow so it points in each direction
+fill(255);
+if (flip1) {
+  push();
+  triangle(10, 0, 6, -4, 6, 4); // arrow head pointing right
+  stroke(255);         // white arrow color
+  strokeWeight(3);
+  line(-10, 0, 10, 0); // arrow line
+  pop();
+} else if (flip2) {
+  push();
+  triangle(-10, 0, -6, -4, -6, 4); // arrow head pointing left
+  stroke(255);         // white arrow color
+  strokeWeight(3);
+  line(-10, 0, 10, 0); // arrow line
+  pop();
+} else if (flip3) {
+  push();
+  triangle(0, -10, -4, -6, 4, -6); // arrow head pointing up
+  stroke(255);         // white arrow color
+  strokeWeight(3);
+  line(0, -10, 0, 10); // arrow line
+  pop();
+} else {
+  push();
+  triangle(0, 10, -4, 6, 4, 6); // arrow head pointing down
+  stroke(255);         // white arrow color
+  strokeWeight(3);
+  line(0, -10, 0, 10); // arrow line
+  pop();
 }
+
+    
+
+    pop(); // end arrow transformation
+  }
 }
