@@ -118,7 +118,6 @@ function drawBackground() {
     ellipse(x, y, w, h);
   }
 }
-
 function drawSecondScene() {
   background(34, 139, 34);
   // road colors and sizes
@@ -137,51 +136,43 @@ function drawSecondScene() {
   drawDashedLine(0, height / 2, width, height / 2, lineColor, roadWidth / 10); // horizontal dashed line
   drawDashedLine(width / 2, 0, width / 2, height, lineColor, roadWidth / 10); // vertial dashed line
   drawSigns()
-
-  // draw the lost character at the center of the canvas
 drawLostCharacter(width / 2, height / 2, frameCount);
-}
-function drawLostCharacter(centerX, centerY, frameCount) {
-  
+}function drawLostCharacter(centerX, centerY, frameCount) {
   push();
+  let moveDist = 5; //how far
   let shakeX = sin(frameCount * 0.6) * 2; // small shake on x-axis
   let shakeY = cos(frameCount * 0.6) * 2; // small shake on y-axis
   translate(centerX + shakeX, centerY + shakeY);
 
-  let steps = 90;// steps in each direction 
-  let pauseSteps = 90; // frames to pause and rotate
-  let moveDist = 5; // how far 
-  let street = Math.floor(frameCount / (steps + pauseSteps)) % 4; // each street is walked down
-  let stepDownStreet = frameCount % (steps + pauseSteps);
-  // how many steps down each street
+  let steps = 90;       // steps in each direction
+  let pauseSteps = 90;  // frames to pause and rotate
+  let returnSteps = steps; // frames for returning to center
+  let street = Math.floor(frameCount /(steps + pauseSteps+ returnSteps)) % 4; // each street is walked down
+  let stepDownStreet = frameCount % (steps + pauseSteps+ returnSteps); //  // how many steps down each street
 
-  // movement directions based on phase, returns to center at the end of each phase
+
+  // movement directions based on phase
   let dx = 0, dy = 0;
-
   if (stepDownStreet < pauseSteps) {
-    // during pause rotate in place
+    // during pause, rotate in place
     let rotationAngle = map(stepDownStreet, 0, pauseSteps, 0, PI / 2);
     rotate(rotationAngle);
-  } else {
-    // after pause, character starts moving
-    let moveStep = stepDownStreet - pauseSteps; // move steps after pause period
-
-    if (street === 0) {
-      // move up and then return
-      dy = -moveDist;
-    } else if (street === 1) {
-      // move down and then return
-      dy = moveDist;
-    } else if (street === 2) {
-      // move left and then return
-      dx = -moveDist;
-    } else if (street === 3) {
-      // move right and then return
-      dx = moveDist;
-    }
-
-    // apply movement after pause period
+  } else if (stepDownStreet< pauseSteps + steps) {
+    // move away from center after pause
+    let moveStep = stepDownStreet - pauseSteps;
+    if (street === 0) dy = -moveDist;       // move up
+    else if (street === 1) dy = moveDist;    // move down
+    else if (street === 2) dx = -moveDist;   // move left
+    else if (street === 3) dx = moveDist;    // move right
     translate(dx * moveStep, dy * moveStep);
+  } else {
+    // return to center after reaching end of street
+    let returnStep = stepDownStreet - (pauseSteps + steps);
+    if (street === 0) dy = moveDist;         // return from up
+    else if (street === 1) dy = -moveDist;    // return from down
+    else if (street === 2) dx = moveDist;     // return from left
+    else if (street === 3) dx = -moveDist;    // return from right
+    translate(dx * (steps - returnStep), dy * (steps - returnStep));
   }
 
   // display character with wavy shape
@@ -206,6 +197,7 @@ function drawLostCharacter(centerX, centerY, frameCount) {
   line(-5, 8, 5, 8); // horizontal line for the mouth 
   pop();
 }
+
 
 function drawDashedLine(x1, y1, x2, y2, color, dashLength) {
   stroke(color);
@@ -240,7 +232,7 @@ function drawSigns() {
     rect(0, 0, 80, 40);
 
    // change arrow direction based on frame
-let flip1 = (frameCount % 60) < 16; / frames 0 to 15
+let flip1 = (frameCount % 60) < 16; // frames 0 to 15
 let flip2 = (frameCount % 60) >= 16 && (frameCount % 60) < 31; // frames 16 to 30
 let flip3 = (frameCount % 60) >= 31 && (frameCount % 60) < 46; //  frames 31 to 45
 let flip4 = (frameCount % 60) >= 46; //  frames 46 to 59
