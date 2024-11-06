@@ -1,10 +1,11 @@
-
-let sceneLength = 12000; // 12 seconds
-let sinceLastScene = 0;//how long has passed since last scene
+let sceneLength = 20000; // 20 seconds
+let sinceLastScene = 0; // how long has passed since last scene
 let isFirstScene = true; // start with scene 1
 let shapeCount = 10; // number of shapes
 let shapeSize = 50; // base size of shapes
 let shapeArray = []; // hold shape instances
+let startMoving = false; // controls shape movement
+
 function setup() {
   createCanvas(800, 600);
   for (let i = 0; i < shapeCount; i++) {
@@ -12,15 +13,17 @@ function setup() {
   }
 }
 
-function draw(){
-if (isFirstScene) {
+function draw() {
+  if (isFirstScene) {
     drawFirstScene();
   } else {
     drawSecondScene();
-}
- if (millis() - sinceLastScene > sceneLength) {  // checks if 20 seconds have passed since last scene
-    isFirstScene = !isFirstScene; 
-    sinceLastScene = millis();  
+  }
+
+  if (millis() - sinceLastScene > sceneLength) { // checks if 20 seconds have passed
+    isFirstScene = !isFirstScene;
+    sinceLastScene = millis();
+    startMoving = false; // reset next time this scene runs
   }
 }
 
@@ -33,7 +36,6 @@ class confusedShape {
     this.speed = random(1, 3);
     this.wavyOffset = random(TWO_PI);
     this.eyeSize = size * 0.2; // initial eye size 
-
   }
   
   update() {
@@ -53,56 +55,81 @@ class confusedShape {
     }
   }
   
-  display() {
-    fill(random(255), random(255), random(255), 150);
-    stroke(0);
-    strokeWeight(2);
-    beginShape();
-    for (let i = 0; i < TWO_PI; i += PI / 6) {
-      let xOffset = cos(i + this.angle + this.wavyOffset) * this.size;
-      let yOffset = sin(i + this.angle + this.wavyOffset) * this.size;
-      vertex(this.x + xOffset, this.y + yOffset);
+display() {
+  if (startMoving) {
+    fill(random(255), random(255), random(255), 150); // shapes are rainbow once they start moving
+  } else {
+    fill(255); // shapes are white before movement
+  }
+  stroke(0);
+  strokeWeight(2);
+  beginShape();
+  for (let i = 0; i < TWO_PI; i += PI / 6) {
+    let xOffset = cos(i + this.angle + this.wavyOffset) * this.size;
+    let yOffset = sin(i + this.angle + this.wavyOffset) * this.size;
+    vertex(this.x + xOffset, this.y + yOffset);
+  }
+  endShape(CLOSE);
+
+  // eyes
+  fill(255);
+  stroke(2);
+  // left eye
+  let leftEyeWidth = this.eyeSize * 1.4;
+  let leftEyeHeight = this.eyeSize * 2.8;
+  ellipse(this.x - this.size / 4, this.y - this.size / 4, leftEyeWidth, leftEyeHeight);
+
+  // right eye
+  let rightEyeWidth = this.eyeSize * 2;
+  let rightEyeHeight = this.eyeSize * 4.4;
+  ellipse(this.x + this.size / 4, this.y - this.size / 4, rightEyeWidth, rightEyeHeight);
+
+  // pupils
+  fill(0);
+  let pupilX = 0;
+  let pupilY = 0;
+  
+  if (startMoving) {
+      // pupils  move when shapes start moving
+      pupilX = cos(frameCount * 0.41) * this.eyeSize * 0.6;
+      pupilY = sin(frameCount * 0.21) * this.eyeSize * 0.4;
+  }
+  
+  //  pupils dont move if shapes are still
+  ellipse(this.x - this.size / 4 + pupilX, this.y - this.size / 4 + pupilY, leftEyeWidth * 0.4, leftEyeHeight * 0.4);
+  ellipse(this.x + this.size / 4 + pupilX, this.y - this.size / 4 + pupilY, rightEyeWidth * 0.4, rightEyeHeight * 0.4);
+
+  // Mouth
+  stroke(0);
+  strokeWeight(3);
+  line(this.x - this.size * 0.2, this.y + this.size * 0.5, this.x + this.size * 0.2, this.y + this.size * 0.5);
+}
+}
+
+function drawFirstScene() {
+  if (millis() - sinceLastScene < 8000) { // 8 seconds with black background
+    background(0);
+    for (let shape of shapeArray) {
+      shape.display(); // show shapes without moving
     }
-    endShape(CLOSE);
-   
-// Eyes
-    fill(255);
-   stroke(2);
-
-    // wonky moving eyes
-   // left eye (wide oval)
-let leftEyeWidth = this.eyeSize * 1.4;  // wider  horizontally
-let leftEyeHeight = this.eyeSize * 2.8; // narrower vertically
-ellipse(this.x - this.size / 4, this.y - this.size / 4, leftEyeWidth, leftEyeHeight); // left eye
-
-// right eye (tall oval)
-let rightEyeWidth = this.eyeSize * 2; // narrower horizontally
-let rightEyeHeight = this.eyeSize * 4.4; // taller vertically
-ellipse(this.x + this.size / 4, this.y - this.size / 4, rightEyeWidth, rightEyeHeight); // right eye
-
-
-    // pupils
-    fill(0);
-    let pupilX = cos(frameCount * 0.41) * this.eyeSize * 0.6; // pupil movement
-    let pupilY = sin(frameCount * 0.21) * this.eyeSize * 0.4; // pupil movement
-
-    ellipse(this.x - this.size / 4 + pupilX, this.y - this.size / 4 + pupilY, leftEyeWidth * 0.4, leftEyeHeight * 0.4); // left pupil
-    ellipse(this.x + this.size / 4 + pupilX, this.y - this.size / 4 + pupilY, rightEyeWidth* 0.4, rightEyeHeight * 0.4); // right pupil
-     // draw mouth 
-stroke(0); // set mouth color to black
-strokeWeight(3); // set thickness for the mouth line
-line(this.x - this.size * 0.2, this.y + this.size * 0.5, this.x + this.size * 0.2, this.y + this.size * 0.5); // draw  line for mouth
+  } else if (millis() - sinceLastScene < 8500) { // .5 second rainbow flash
+    drawRainbowFlash();
+  } else {
+    startMoving = true; //  shapes start moving after  flash
+    drawBackground();
+    for (let shape of shapeArray) {
+      if (startMoving) shape.update(); // update shapes to move
+      shape.display();
+    }
   }
 }
 
-
-function drawFirstScene() {
-
-  drawBackground();
-  
-  for (let shape of shapeArray) {
-    shape.update();
-    shape.display();
+// rainbow flash 
+function drawRainbowFlash() {
+  for (let i = 0; i < 8; i++) {
+    fill(random(255), random(255), random(255), 225); // rainbow colors
+    noStroke();
+    ellipse(random(width), random(height), random(200, 400));
   }
 }
 
@@ -113,7 +140,7 @@ function drawBackground() {
     fill(random(255), random(255), random(255), 50);
     let x = random(width);
     let y = random(height);
-    let w = random(100, 400); 
+    let w = random(100, 400);
     let h = random(100, 400);
     ellipse(x, y, w, h);
   }
