@@ -5,7 +5,7 @@ let shapeCount = 10; // number of shapes
 let shapeSize = 50; // base size of shapes
 let shapeArray = []; // hold shape instances
 let startMoving = false; // controls shape movement
-
+let currentScene = 1; // Start with scene 1 (first scene)
 function setup() {
   createCanvas(800, 600);
   for (let i = 0; i < shapeCount; i++) {
@@ -14,16 +14,20 @@ function setup() {
 }
 
 function draw() {
-  if (isFirstScene) {
-    drawFirstScene();
-  } else {
-    drawSecondScene();
-  }
 
-  if (millis() - sinceLastScene > sceneLength) { // checks if 20 seconds have passed
-    isFirstScene = !isFirstScene;
+
+  // Handle scene transitions
+  if (millis() - sinceLastScene > sceneLength) { // Check if 20 seconds have passed
+    currentScene = (currentScene % 3) + 1; // Switch between scenes (1 to 3)
     sinceLastScene = millis();
-    startMoving = false; // reset next time this scene runs
+    startMoving = false; // Reset movement for next scene transition
+  }
+    if (currentScene === 1) {
+    drawFirstScene();
+  } else if (currentScene === 2) {
+    drawSecondScene();
+  } else if (currentScene === 3) {
+    drawThirdScene();
   }
 }
 
@@ -107,12 +111,12 @@ display() {
 }
 
 function drawFirstScene() {
-  if (millis() - sinceLastScene < 8000) { // 8 seconds with black background
+  if (millis() - sinceLastScene < 5000) { // 5 seconds with black background
     background(0);
     for (let shape of shapeArray) {
       shape.display(); // show shapes without moving
     }
-  } else if (millis() - sinceLastScene < 8500) { // .5 second rainbow flash
+  } else if (millis() - sinceLastScene < 5500) { // .5 second rainbow flash
     drawRainbowFlash();
   } else {
     startMoving = true; //  shapes start moving after  flash
@@ -300,4 +304,139 @@ if (flip1) {
 
     pop(); // end arrow transformation
   }
+}
+
+
+function drawThirdScene() {
+  background(173, 216, 230, 150);
+ cursor('none'); // hide the default cursor
+  // add the book cursor 
+  drawBook(mouseX, mouseY);
+
+  let cols = 5;  // num of columns
+  let rows = 5;  // num of rows
+  let circleDiameter = 40;  // diameter of each character
+  let spacingX = (width - (circleDiameter * cols)) / (cols + 1);  // horizontal spacing
+  let spacingY = (height - (circleDiameter * rows)) / (rows + 1); // vertical spacing
+  let count = 0; // counter for alternating shapes
+  
+  // outer loop for rows
+  for (let i = 0; i < rows; i++) {
+    // inner loop for columns
+    for (let j = 0; j < cols; j++) {
+      // calculate the index 
+      let index = i * cols + j;
+      
+      // alternate between skipping every 2nd and 3rd shape
+      if (count % 2 === 0) { // every 2nd shape
+        if (index % 2 !== 0) {
+          continue; // skip this shape
+        }
+      } else { // every 3rd shape
+        if (index % 3 !== 0) {
+          continue; // skip this shape
+        }
+      }
+
+      // character
+      fill(random(255), random(255), random(255), 150);
+      stroke(0);
+      strokeWeight(1);
+      
+      // characters shifting position
+      let offsetX = sin(frameCount * 0.1 + i * 0.5) * 20;
+      let offsetY = cos(frameCount * 0.1 + j * 0.5) * 20;
+
+      // character rotation 
+      let rotationAngle = sin(frameCount * 0.05 + (i + j) * 0.1) * 0.2;  
+
+      // character grow and shrink
+      let scaleFactor = 1 + 0.2 * sin(frameCount * 0.1 + i * j); 
+      
+      // translate/ rotate/ scale transformations
+      push();
+      translate(spacingX + j * (circleDiameter + spacingX) + offsetX, 
+                spacingY + i * (circleDiameter + spacingY) + offsetY);
+      rotate(rotationAngle);
+      scale(scaleFactor);  //grow and shrink shapes
+
+      
+      beginShape();
+      for (let angle = 0; angle < TWO_PI; angle += PI / 6) {
+        let xOffset = cos(angle) * circleDiameter / 2;
+        let yOffset = sin(angle) * circleDiameter / 2;
+        vertex(xOffset, yOffset);
+      }
+      endShape(CLOSE);
+
+      // draw eyes 
+      fill(255);
+      ellipse(-4, -5, 6, 10); // left eye
+      ellipse(4, -5, 6, 7);   // right eye
+
+      // calculate direction from character center to mouse position
+      let leftEyeCenterX = -4;
+      let leftEyeCenterY = -5;
+      let rightEyeCenterX = 4;
+      let rightEyeCenterY = -5;
+
+      // calculate angle to cursor for each eye
+      let leftAngle = atan2(mouseY - (spacingY + i * (circleDiameter + spacingY) + offsetY + leftEyeCenterY), 
+                            mouseX - (spacingX + j * (circleDiameter + spacingX) + offsetX + leftEyeCenterX));
+      let rightAngle = atan2(mouseY - (spacingY + i * (circleDiameter + spacingY) + offsetY + rightEyeCenterY), 
+                             mouseX - (spacingX + j * (circleDiameter + spacingX) + offsetX + rightEyeCenterX));
+
+      // maximum distance pupils move
+      let maxPupilDistance = 2;
+
+      // left pupil position
+      let leftPupilX = leftEyeCenterX + cos(leftAngle) * maxPupilDistance;
+      let leftPupilY = leftEyeCenterY + sin(leftAngle) * maxPupilDistance;
+
+      // right pupil position
+      let rightPupilX = rightEyeCenterX + cos(rightAngle) * maxPupilDistance;
+      let rightPupilY = rightEyeCenterY + sin(rightAngle) * maxPupilDistance;
+
+      // pupils
+      fill(0); 
+      ellipse(leftPupilX, leftPupilY, 3, 5);  // left pupil
+      ellipse(rightPupilX, rightPupilY, 3, 5); // right pupil
+
+      // Draw mouth (static, not affected by cursor)
+      strokeWeight(1);
+      line(-5, 8, 5, 8); // horizontal line for the mouth
+
+     
+      pop();
+    }
+  }
+
+  // alternate between skipping every 2nd and 3rd shape
+  count++;
+  
+  
+}
+
+function drawBook(x, y) {
+
+  fill(255);  // white pages
+  stroke(0);           // black outline
+  strokeWeight(4);   
+  // pages
+  rect(x - 30, y - 20, 60, 40, 10); 
+  fill(139, 69, 19);  // brown book cover
+  stroke(0);           // black outline
+  strokeWeight(3);     
+  
+  //book cover
+  rect(x - 30, y - 20, 57, 33, 10);  
+  stroke(255, 215, 0);  // golden color
+  strokeWeight(2);      
+  
+  //golden lines on book
+  line(x - 5, y - 10, x - 5, y + 3); 
+  
+  // Right vertical golden line
+  line(x + 10, y - 15, x + 10, y + 7);  
+  
 }
